@@ -14,4 +14,8 @@ fn main() {
     list.print();
     list.insert_at(4, 10);
     list.print();
+
+    list.delete_at(10);
+
+    list.print();
 }

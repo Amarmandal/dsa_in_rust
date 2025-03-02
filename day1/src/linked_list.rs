@@ -23,12 +23,17 @@ impl<T> LinkedList<T> {
         self.head = Some(new_node); // Set new node as head
     }
 
-    pub fn pop(&mut self) {
+    pub fn pop(&mut self) -> Option<T> {
         let current_head = self.head.take();
 
         match current_head {
-            Some(node) => self.head = node.next,
-            None => println!("Nothing to pop!"),
+            Some(node) => {
+                self.head = node.next;
+                return Some(node.data);
+            }
+            None => {
+                return None;
+            }
         }
     }
 
@@ -60,6 +65,35 @@ impl<T> LinkedList<T> {
         });
 
         before_target_node.next = Some(new_node);
+    }
+
+    pub fn delete_at(&mut self, index: usize) -> Option<T> {
+        let mut counter = 0;
+
+        if self.head.is_none() {
+            return None;
+        }
+
+        if index == 0 {
+            return self.pop();
+        }
+
+        // for 2 or more elements
+        let mut before_target_node = self.head.as_mut().unwrap();
+
+        while counter < index - 1 {
+            if let Some(ref mut next_node) = before_target_node.next {
+                before_target_node = next_node;
+            }
+            counter += 1;
+        }
+
+        if let Some(node_to_delete) = before_target_node.next.take() {
+            before_target_node.next = node_to_delete.next;
+            return Some(node_to_delete.data);
+        }
+
+        None
     }
 
     pub fn push_back(&mut self, data: T)

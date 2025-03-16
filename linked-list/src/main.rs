@@ -1,21 +1,17 @@
-mod linked_list;
+mod doubly_linked_list;
+// mod linked_list;
 
-use linked_list::LinkedList;
+// use linked_list::LinkedList;
+use doubly_linked_list::DoublyLinkedList;
 
 fn main() {
-    let mut list: LinkedList<i32> = LinkedList::new();
+    let mut list: DoublyLinkedList<i32> = DoublyLinkedList::new();
 
-    list.push_back(1);
-    list.push_back(3);
-    list.print();
-    list.insert_at(2, 1);
-    list.print();
-    list.insert_at(0, 0);
-    list.print();
-    list.insert_at(4, 10);
+    list.push(10);
+
     list.print();
 
-    list.delete_at(10);
+    list.pop();
 
     list.print();
 }

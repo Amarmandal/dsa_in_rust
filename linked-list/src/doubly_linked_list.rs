@@ -1,4 +1,4 @@
-use std::cell::{Ref, RefCell};
+use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct Node<T> {
@@ -9,11 +9,15 @@ pub struct Node<T> {
 
 pub struct DoublyLinkedList<T> {
     head: Option<Rc<RefCell<Node<T>>>>,
+    tail: Option<Rc<RefCell<Node<T>>>>,
 }
 
 impl<T> DoublyLinkedList<T> {
     pub fn new() -> Self {
-        DoublyLinkedList { head: None }
+        DoublyLinkedList {
+            head: None,
+            tail: None,
+        }
     }
 
     pub fn push_back(&mut self, data: T) -> T
@@ -29,7 +33,8 @@ impl<T> DoublyLinkedList<T> {
                 next: None,
             }));
 
-            self.head = Some(new_node);
+            self.head = Some(Rc::clone(&new_node));
+            self.tail = Some(Rc::clone(&new_node));
 
             return data;
         }
@@ -47,7 +52,8 @@ impl<T> DoublyLinkedList<T> {
                     next: None,
                 }));
 
-                node.borrow_mut().next = Some(new_node);
+                node.borrow_mut().next = Some(Rc::clone(&new_node));
+                self.tail = Some(Rc::clone(&new_node));
 
                 return data;
             }
@@ -73,20 +79,20 @@ impl<T> DoublyLinkedList<T> {
             .map_or(false, |n| n.borrow().next.is_none())
         {
             let node = self.head.take().unwrap();
+            self.tail.take();
             return Some(node.borrow().data.clone());
         }
 
-        let mut current = self.head.clone();
+        let last_node = self.tail.clone();
 
-        while let Some(node) = current {
+        if let Some(node) = last_node {
             // If next is None, we reached the last node
-            if node.borrow().next.is_none() {
-                let prev_node = node.borrow_mut().prev.take().unwrap();
-                prev_node.borrow_mut().next.take();
-                return Some(node.borrow().data.clone()); // Return last node
-            }
+            let prev_node = node.borrow_mut().prev.take().unwrap();
+            prev_node.borrow_mut().next.take();
 
-            current = node.borrow().next.clone(); // Move to the next node
+            self.tail = Some(Rc::clone(&prev_node));
+
+            return Some(node.borrow().data.clone()); // Return last node
         }
 
         unreachable!()

@@ -2,6 +2,7 @@
 **/.cargo/
 .cargo/
 .cargo-lock
+playground/
 
 
 **/*.dll

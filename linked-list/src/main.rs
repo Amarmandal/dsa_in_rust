@@ -7,7 +7,10 @@ use doubly_linked_list::DoublyLinkedList;
 fn main() {
     let mut list: DoublyLinkedList<i32> = DoublyLinkedList::new();
 
-    list.push(10);
+    list.push_back(10);
+    list.push_back(20);
+    list.push_back(200);
+    list.push_back(2111);
 
     list.print();
 

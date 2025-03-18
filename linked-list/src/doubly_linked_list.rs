@@ -1,4 +1,4 @@
-use std::cell::RefCell;
+use std::cell::{Ref, RefCell};
 use std::rc::Rc;
 
 pub struct Node<T> {
@@ -14,6 +14,39 @@ pub struct DoublyLinkedList<T> {
 impl<T> DoublyLinkedList<T> {
     pub fn new() -> Self {
         DoublyLinkedList { head: None }
+    }
+
+    pub fn push_back(&mut self, data: T) -> Option<T>
+    where
+        T: std::fmt::Display + Clone,
+    {
+        let cloned_data = data.clone();
+
+        if self.head.is_none() {
+            self.push(data);
+            return Some(cloned_data);
+        }
+
+        let mut current = self.head.clone();
+
+        while let Some(node) = current {
+            // if its the last node
+            if node.borrow().next.is_none() {
+                let new_node = Rc::new(RefCell::new(Node {
+                    prev: Some(Rc::clone(&node)),
+                    data: data.clone(),
+                    next: None,
+                }));
+
+                node.borrow_mut().next = Some(new_node);
+
+                return Some(data.clone());
+            }
+
+            current = node.borrow().next.clone();
+        }
+
+        unreachable!()
     }
 
     pub fn pop(&mut self) -> Option<T>
@@ -50,10 +83,11 @@ impl<T> DoublyLinkedList<T> {
         unreachable!()
     }
 
-    pub fn push(&mut self, data: T)
+    pub fn push(&mut self, data: T) -> Option<T>
     where
-        T: std::fmt::Display,
+        T: std::fmt::Display + Clone,
     {
+        let cloned_val = data.clone();
         let new_node = Rc::new(RefCell::new(Node {
             prev: None,
             data,
@@ -64,7 +98,9 @@ impl<T> DoublyLinkedList<T> {
             old_head.borrow_mut().prev = Some(Rc::clone(&new_node));
         }
 
-        self.head = Some(new_node)
+        self.head = Some(new_node);
+
+        Some(cloned_val)
     }
 
     pub fn traverse_to(&self, target: i32)

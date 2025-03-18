@@ -16,15 +16,22 @@ impl<T> DoublyLinkedList<T> {
         DoublyLinkedList { head: None }
     }
 
-    pub fn push_back(&mut self, data: T) -> Option<T>
+    pub fn push_back(&mut self, data: T) -> T
     where
         T: std::fmt::Display + Clone,
     {
-        let cloned_data = data.clone();
-
         if self.head.is_none() {
-            self.push(data);
-            return Some(cloned_data);
+            let new_data = data.clone();
+
+            let new_node = Rc::new(RefCell::new(Node {
+                data: new_data,
+                prev: None,
+                next: None,
+            }));
+
+            self.head = Some(new_node);
+
+            return data;
         }
 
         let mut current = self.head.clone();
@@ -32,15 +39,17 @@ impl<T> DoublyLinkedList<T> {
         while let Some(node) = current {
             // if its the last node
             if node.borrow().next.is_none() {
+                let new_data = data.clone();
+
                 let new_node = Rc::new(RefCell::new(Node {
                     prev: Some(Rc::clone(&node)),
-                    data: data.clone(),
+                    data: new_data,
                     next: None,
                 }));
 
                 node.borrow_mut().next = Some(new_node);
 
-                return Some(data.clone());
+                return data;
             }
 
             current = node.borrow().next.clone();

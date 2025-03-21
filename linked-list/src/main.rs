@@ -1,8 +1,8 @@
 mod doubly_linked_list;
-// mod linked_list;
+mod linked_list;
 
-// use linked_list::LinkedList;
 use doubly_linked_list::DoublyLinkedList;
+// use linked_list::LinkedList;
 
 fn main() {
     let mut list: DoublyLinkedList<i32> = DoublyLinkedList::new();

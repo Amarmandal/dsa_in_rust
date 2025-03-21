@@ -37,6 +37,33 @@ impl<T> LinkedList<T> {
         }
     }
 
+    // fn reverse(&mut self) {
+    //     if self.head.is_none() {
+    //         println!("Empty List!");
+    //         return;
+    //     }
+
+    //     if self
+    //         .head
+    //         .as_ref()
+    //         .map_or(false, |n| n.borrow().next.is_none())
+    //     {
+    //         return;
+    //     }
+
+    //     let mut prev: Option<Rc<RefCell<Node>>> = None;
+    //     let mut current = self.head.clone();
+
+    //     while let Some(node) = current {
+    //         let next = node.borrow().next.as_ref().map(Rc::clone);
+    //         node.borrow_mut().next = prev.as_ref().map(Rc::clone);
+    //         prev = Some(node.clone());
+    //         current = next;
+    //     }
+
+    //     self.head = prev;
+    // }
+
     pub fn insert_at(&mut self, data: T, index: usize)
     where
         T: std::fmt::Display,

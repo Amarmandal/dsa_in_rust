@@ -13,10 +13,5 @@ fn main() {
 
     list.print();
 
-    println!("Deleting the node at pos 2");
-    list.delete_at(2);
-
-    list.reverse();
-
-    list.print();
+    println!("Has cycle: {}", list.has_cycle());
 }

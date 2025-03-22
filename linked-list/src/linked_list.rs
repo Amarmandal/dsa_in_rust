@@ -163,4 +163,31 @@ impl<T> LinkedList<T> {
         }
         println!("None");
     }
+
+    pub fn has_cycle(&self) -> bool {
+        if self.head.is_none() {
+            return false;
+        }
+
+        let mut slow = self.head.as_ref().map(Rc::clone);
+        let mut fast = self.head.clone().unwrap().borrow().next.clone();
+
+        while let Some(rabbit) = fast {
+            if let Some(tortoise) = slow {
+                if Rc::ptr_eq(&tortoise, &rabbit) {
+                    return true;
+                }
+                slow = tortoise.borrow().next.as_ref().map(Rc::clone);
+            }
+            // increase rabbit by twice
+            fast = rabbit.borrow().next.clone();
+            if fast.is_none() {
+                return false;
+            } else {
+                fast = fast.unwrap().borrow().next.clone();
+            }
+        }
+
+        false
+    }
 }

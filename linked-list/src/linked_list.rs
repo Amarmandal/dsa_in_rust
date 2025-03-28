@@ -1,18 +1,80 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+#[derive(Debug)]
 pub struct Node<T> {
     data: T,
     next: Option<Rc<RefCell<Node<T>>>>,
 }
 
+#[allow(unused)]
+impl<T> Node<T>
+where
+    T: Default,
+{
+    fn new(data: T) -> Self {
+        Node { data, next: None }
+    }
+
+    fn new_default() -> Self {
+        Node {
+            data: T::default(),
+            next: None,
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct LinkedList<T> {
     head: Option<Rc<RefCell<Node<T>>>>,
 }
 
-impl<T> LinkedList<T> {
+#[allow(unused)]
+impl<T> LinkedList<T>
+where
+    T: Default,
+{
     pub fn new() -> Self {
         LinkedList { head: None }
+    }
+
+    pub fn remove_nth(&mut self, n: &mut u16) {
+        if self.head.is_none() {
+            println!("Nothing to remove");
+            return;
+        }
+
+        let dummy_node = Rc::new(RefCell::new(Node::new_default()));
+        dummy_node.borrow_mut().next = self.head.clone();
+
+        let mut left_node = Some(Rc::clone(&dummy_node));
+        let mut right_node = self.head.clone();
+
+        while *n > 0 {
+            if let Some(current) = right_node.take() {
+                if let Some(next_node) = current.borrow().next.clone() {
+                    right_node = Some(next_node);
+                    *n -= 1;
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        while let Some(node) = right_node {
+            right_node = node.borrow().next.clone();
+            left_node = left_node.unwrap().borrow_mut().next.clone();
+        }
+
+        left_node.unwrap().borrow_mut().next = left_node
+            .as_ref()
+            .and_then(|n| n.borrow().next.clone())
+            .as_ref()
+            .and_then(|n| n.borrow().next.clone());
+
+        dummy_node.borrow_mut().next.take();
     }
 
     pub fn push(&mut self, data: T) {
@@ -164,7 +226,10 @@ impl<T> LinkedList<T> {
         println!("None");
     }
 
-    pub fn has_cycle(&self) -> bool {
+    pub fn has_cycle(&self) -> bool
+    where
+        T: std::fmt::Debug,
+    {
         if self.head.is_none() {
             return false;
         }
@@ -180,12 +245,11 @@ impl<T> LinkedList<T> {
                 slow = tortoise.borrow().next.as_ref().map(Rc::clone);
             }
             // increase rabbit by twice
-            fast = rabbit.borrow().next.clone();
-            if fast.is_none() {
-                return false;
-            } else {
-                fast = fast.unwrap().borrow().next.clone();
-            }
+            fast = rabbit
+                .borrow()
+                .next
+                .as_ref()
+                .and_then(|n| n.borrow().next.clone());
         }
 
         false

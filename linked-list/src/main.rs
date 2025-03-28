@@ -10,8 +10,11 @@ fn main() {
     list.push_back(10);
     list.push_back(20);
     list.push_back(30);
+    list.push_back(40);
+    list.push_back(50);
 
     list.print();
 
-    println!("Has cycle: {}", list.has_cycle());
+    list.remove_nth(&mut 2);
+    list.print();
 }

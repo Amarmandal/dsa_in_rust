@@ -12,6 +12,7 @@ pub struct DoublyLinkedList<T> {
     tail: Option<Rc<RefCell<Node<T>>>>,
 }
 
+#[allow(dead_code)]
 impl<T> DoublyLinkedList<T> {
     pub fn new() -> Self {
         DoublyLinkedList {
